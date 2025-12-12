@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace WebShop.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +23,7 @@ namespace WebShop.Migrations
                     Zipcode = table.Column<string>(type: "text", nullable: false),
                     Street = table.Column<string>(type: "text", nullable: false),
                     Number = table.Column<string>(type: "text", nullable: false),
-                    AdditionalInfo = table.Column<string>(type: "text", nullable: false)
+                    AdditionalInfo = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -50,7 +50,7 @@ namespace WebShop.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
-                    AddressId = table.Column<int>(type: "integer", nullable: true),
+                    AddressId = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "text", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
@@ -73,7 +73,8 @@ namespace WebShop.Migrations
                         name: "FK_Customers_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,7 +107,8 @@ namespace WebShop.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CustomerId = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<int>(type: "integer", nullable: false),
                     PaymentConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     Terminated = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -117,8 +119,7 @@ namespace WebShop.Migrations
                         name: "FK_Carts_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -167,18 +168,11 @@ namespace WebShop.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CartId = table.Column<int>(type: "integer", nullable: false),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false)
+                    Amount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductInCarts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProductInCarts_Carts_CartId",
-                        column: x => x.CartId,
-                        principalTable: "Carts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProductInCarts_Products_ProductId",
                         column: x => x.ProductId,
@@ -203,11 +197,6 @@ namespace WebShop.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductInCarts_CartId",
-                table: "ProductInCarts",
-                column: "CartId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProductInCarts_ProductId",
                 table: "ProductInCarts",
                 column: "ProductId");
@@ -222,6 +211,9 @@ namespace WebShop.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Carts");
+
+            migrationBuilder.DropTable(
                 name: "Images");
 
             migrationBuilder.DropTable(
@@ -231,19 +223,16 @@ namespace WebShop.Migrations
                 name: "ProductInCarts");
 
             migrationBuilder.DropTable(
-                name: "Carts");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Addresses");
         }
     }
 }

@@ -12,8 +12,8 @@ using WebShop.Data;
 namespace WebShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251212141121_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251212182755_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,6 @@ namespace WebShop.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AdditionalInfo")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Country")
@@ -71,11 +70,13 @@ namespace WebShop.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("PaymentConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
@@ -115,7 +116,7 @@ namespace WebShop.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("AddressId")
+                    b.Property<int>("AddressId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -254,15 +255,10 @@ namespace WebShop.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CartId");
 
                     b.HasIndex("ProductId");
 
@@ -273,9 +269,7 @@ namespace WebShop.Migrations
                 {
                     b.HasOne("WebShop.Models.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.Navigation("Customer");
                 });
@@ -283,38 +277,36 @@ namespace WebShop.Migrations
             modelBuilder.Entity("WebShop.Models.Customer", b =>
                 {
                     b.HasOne("WebShop.Models.Address", "Address")
-                        .WithMany("Customers")
-                        .HasForeignKey("AddressId");
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Address");
                 });
 
             modelBuilder.Entity("WebShop.Models.Image", b =>
                 {
-                    b.HasOne("WebShop.Models.Product", "Product")
+                    b.HasOne("WebShop.Models.Product", null)
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WebShop.Models.Inventory", b =>
                 {
-                    b.HasOne("WebShop.Models.Product", "Product")
+                    b.HasOne("WebShop.Models.Product", null)
                         .WithOne("Inventory")
                         .HasForeignKey("WebShop.Models.Inventory", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WebShop.Models.Product", b =>
                 {
                     b.HasOne("WebShop.Models.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -324,36 +316,13 @@ namespace WebShop.Migrations
 
             modelBuilder.Entity("WebShop.Models.ProductInCart", b =>
                 {
-                    b.HasOne("WebShop.Models.Cart", "Cart")
-                        .WithMany("ProductInCarts")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WebShop.Models.Product", "Product")
-                        .WithMany("ProductInCarts")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cart");
-
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("WebShop.Models.Address", b =>
-                {
-                    b.Navigation("Customers");
-                });
-
-            modelBuilder.Entity("WebShop.Models.Cart", b =>
-                {
-                    b.Navigation("ProductInCarts");
-                });
-
-            modelBuilder.Entity("WebShop.Models.Category", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("WebShop.Models.Product", b =>
@@ -362,8 +331,6 @@ namespace WebShop.Migrations
 
                     b.Navigation("Inventory")
                         .IsRequired();
-
-                    b.Navigation("ProductInCarts");
                 });
 #pragma warning restore 612, 618
         }

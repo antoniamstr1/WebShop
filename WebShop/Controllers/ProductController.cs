@@ -18,18 +18,24 @@ namespace WebShop.Controllers
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             var products = await _context.Products
-                                         .ToListAsync();
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Include(p => p.Inventory)
+            .ToListAsync();
             return Ok(products);
         }
 
         // dohvat svih proizvoda određene kategorije
-        [HttpGet("category/{categoryId}")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] int? categoryId)
+        [HttpGet("{categoryId}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(int categoryId)
         {
-            var query = _context.Products.Include(p => p.Category).AsQueryable();
+            var query = _context.Products
+                        .Include(p => p.Images)
+                        .Include(p => p.Inventory)
+                        .Include(p => p.Category)
+                        .AsQueryable();
 
-            if (categoryId.HasValue)
-                query = query.Where(p => p.CategoryId == categoryId.Value);
+            query = query.Where(p => p.Category.Id == categoryId);
 
             var products = await query.ToListAsync();
             return Ok(products);

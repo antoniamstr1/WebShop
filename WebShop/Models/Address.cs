@@ -13,6 +13,5 @@ namespace WebShop.Models
         public string Number { get; set; }
         public string? AdditionalInfo { get; set; }
 
-        public ICollection<Customer> Customers { get; set; }
     }
 }

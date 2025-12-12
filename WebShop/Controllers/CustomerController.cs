@@ -14,10 +14,7 @@ namespace WebShop.Controllers
 
         // register
 
-
         // sign in 
-
-
 
         // sign out
 

@@ -17,7 +17,7 @@ namespace WebShop.Controllers
         public async Task<ActionResult<Cart>> GetCartForCustomer(string customerId)
         {
             var cart = await _context.Carts
-                                     .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+                                     .FirstOrDefaultAsync(c => c.Customer.Id == customerId);
 
             if (cart == null)
                 return NotFound($"No cart found for CustomerId {customerId}");
@@ -29,21 +29,27 @@ namespace WebShop.Controllers
 
         // kreiranje nove košarice - paziti da samo jedna može biti u istom trenutku
         [HttpPost("customer/{customerId}")]
-        public async Task<ActionResult<Cart>> CreateCartForCustomer(string customerId)
+        public async Task<ActionResult<Cart>> CreateCartForCustomer(string customerId, int productId)
         {
 
             var existingCart = await _context.Carts
-                                             .FirstOrDefaultAsync(c => c.CustomerId == customerId && !c.Terminated);
+                                             .FirstOrDefaultAsync(c => c.Customer.Id == customerId && !c.Terminated);
 
             if (existingCart != null)
                 return BadRequest("Active cart from customer.");
 
+            var currentUser = await _context.Customers
+                                             .FirstOrDefaultAsync(c => c.Id == customerId);
+
+            if (currentUser != null)
+                return BadRequest("Cannot find user.");
+
             var cart = new Cart
             {
-                CustomerId = customerId,
+                Customer = currentUser,
                 StartTime = DateTime.UtcNow,
                 PaymentConfirmed = false,
-                Terminated = false
+                Terminated = false,
             };
 
             _context.Carts.Add(cart);
