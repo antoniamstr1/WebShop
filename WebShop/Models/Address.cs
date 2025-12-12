@@ -11,7 +11,7 @@ namespace WebShop.Models
         public string Zipcode { get; set; }
         public string Street { get; set; }
         public string Number { get; set; }
-        public string AdditionalInfo { get; set; }
+        public string? AdditionalInfo { get; set; }
 
         public ICollection<Customer> Customers { get; set; }
     }

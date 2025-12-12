@@ -12,7 +12,7 @@ using WebShop.Data;
 namespace WebShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251212112402_InitialCreate")]
+    [Migration("20251212141121_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -80,6 +80,9 @@ namespace WebShop.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("Terminated")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -106,7 +109,7 @@ namespace WebShop.Migrations
 
             modelBuilder.Entity("WebShop.Models.Customer", b =>
                 {
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
@@ -124,7 +127,7 @@ namespace WebShop.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Id")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -162,7 +165,7 @@ namespace WebShop.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("text");
 
-                    b.HasKey("FirstName");
+                    b.HasKey("Id");
 
                     b.HasIndex("AddressId");
 

@@ -47,10 +47,10 @@ namespace WebShop.Migrations
                 name: "Customers",
                 columns: table => new
                 {
+                    Id = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     AddressId = table.Column<int>(type: "integer", nullable: true),
-                    Id = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "text", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
@@ -68,7 +68,7 @@ namespace WebShop.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.FirstName);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Customers_Addresses_AddressId",
                         column: x => x.AddressId,
@@ -107,7 +107,8 @@ namespace WebShop.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CustomerId = table.Column<string>(type: "text", nullable: false),
-                    PaymentConfirmed = table.Column<bool>(type: "boolean", nullable: false)
+                    PaymentConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    Terminated = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -116,7 +117,7 @@ namespace WebShop.Migrations
                         name: "FK_Carts_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "FirstName",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 

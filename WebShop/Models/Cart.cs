@@ -10,6 +10,7 @@ namespace WebShop.Models
         public string CustomerId { get; set; }
         public Customer Customer { get; set; }
         public bool PaymentConfirmed { get; set; }
+        public bool Terminated { get; set; }
 
         public ICollection<ProductInCart> ProductInCarts { get; set; }
     }

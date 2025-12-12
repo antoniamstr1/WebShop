@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "aavaXI0H01c=",
+  "dgSpecHash": "i6QgONCYG1M=",
   "success": true,
   "projectFilePath": "C:\\WebShop\\WebShop\\WebShop.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mestr\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\mestr\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\10.0.1\\microsoft.aspnetcore.identity.entityframeworkcore.10.0.1.nupkg.sha512",
+    "C:\\Users\\mestr\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\10.0.1\\microsoft.aspnetcore.identity.ui.10.0.1.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.0\\microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.build\\17.7.2\\microsoft.build.17.7.2.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.build.framework\\17.14.28\\microsoft.build.framework.17.14.28.nupkg.sha512",
@@ -26,6 +28,7 @@
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.extensions.configuration.binder\\10.0.1\\microsoft.extensions.configuration.binder.10.0.1.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.extensions.configuration.json\\10.0.1\\microsoft.extensions.configuration.json.10.0.1.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.extensions.dependencymodel\\10.0.1\\microsoft.extensions.dependencymodel.10.0.1.nupkg.sha512",
+    "C:\\Users\\mestr\\.nuget\\packages\\microsoft.extensions.fileproviders.embedded\\10.0.1\\microsoft.extensions.fileproviders.embedded.10.0.1.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.net.stringtools\\17.14.28\\microsoft.net.stringtools.17.14.28.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\microsoft.openapi\\2.3.0\\microsoft.openapi.2.3.0.nupkg.sha512",
     "C:\\Users\\mestr\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",

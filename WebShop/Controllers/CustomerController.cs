@@ -12,6 +12,19 @@ namespace WebShop.Controllers
         private readonly ApplicationDbContext _context;
         public CustomerController(ApplicationDbContext context) => _context = context;
 
+        // register
+
+
+        // sign in 
+
+
+
+        // sign out
+
+        //trenutni korisnik
+
+        //promjena informacija o ternutnom korisniku
+
         
     }
 

@@ -14,6 +14,27 @@ namespace WebShop.Controllers
         public InventoryController(ApplicationDbContext context) => _context = context;
 
 
+        // info da li određenog proizvoda ima u skladištu
+        [HttpGet("quantity/{productId}")]
+        public async Task<ActionResult<int>> GetInventoryQuantity(int productId)
+        {
+            var inventory = await _context.Inventories
+                                          .FirstOrDefaultAsync(i => i.ProductId == productId);
+
+            if (inventory == null)
+                return NotFound($"No inventory found for ProductId {productId}");
+
+            return Ok(inventory.InStockNumber);
+        }
+
+        // dohvat svog inventara - admin 
+
+        // dodavanje novog inventara - admin 
+
+        // mijenjanje inventara - admin
+
+        // brisanje inventara - admin
+
     }
 
 }

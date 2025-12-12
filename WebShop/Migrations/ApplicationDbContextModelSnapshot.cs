@@ -50,9 +50,8 @@ namespace WebShop.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Zipcode")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Zipcode")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -76,6 +75,9 @@ namespace WebShop.Migrations
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Terminated")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -103,7 +105,7 @@ namespace WebShop.Migrations
 
             modelBuilder.Entity("WebShop.Models.Customer", b =>
                 {
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
@@ -121,7 +123,7 @@ namespace WebShop.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Id")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -159,7 +161,7 @@ namespace WebShop.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("text");
 
-                    b.HasKey("FirstName");
+                    b.HasKey("Id");
 
                     b.HasIndex("AddressId");
 
