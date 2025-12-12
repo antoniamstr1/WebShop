@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebShop.Data;
-using Microsoft.AspNetCore.Identity;
+using WebShop.Services;     
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 var app = builder.Build();
 
@@ -25,6 +28,8 @@ app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+
 
 if (app.Environment.IsDevelopment())
 {

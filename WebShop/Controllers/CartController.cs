@@ -17,7 +17,7 @@ namespace WebShop.Controllers
         public async Task<ActionResult<Cart>> GetCartForCustomer(string customerId)
         {
             var cart = await _context.Carts
-                                     .FirstOrDefaultAsync(c => c.Customer.Id == customerId);
+                                     .FirstOrDefaultAsync(c => c.Customer.Id.ToString() == customerId);
 
             if (cart == null)
                 return NotFound($"No cart found for CustomerId {customerId}");
@@ -33,13 +33,13 @@ namespace WebShop.Controllers
         {
 
             var existingCart = await _context.Carts
-                                             .FirstOrDefaultAsync(c => c.Customer.Id == customerId && !c.Terminated);
+                                             .FirstOrDefaultAsync(c => c.Customer.Id.ToString() == customerId && !c.Terminated);
 
             if (existingCart != null)
                 return BadRequest("Active cart from customer.");
 
             var currentUser = await _context.Customers
-                                             .FirstOrDefaultAsync(c => c.Id == customerId);
+                                             .FirstOrDefaultAsync(c => c.Id.ToString() == customerId);
 
             if (currentUser != null)
                 return BadRequest("Cannot find user.");
