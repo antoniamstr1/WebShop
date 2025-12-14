@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebShop.Data;
 using WebShop.Models;
-
+using WebShop.Entities;
 namespace WebShop.Controllers
 {
     [ApiController]
@@ -11,19 +11,6 @@ namespace WebShop.Controllers
     {
         private readonly ApplicationDbContext _context;
         public ProductInCartController(ApplicationDbContext context) => _context = context;
-
-        // dodavanje novog proizvoda u košaricu
-        [HttpPost]
-        public async Task<ActionResult<ProductInCart>> AddProductToCart(ProductInCart productInCart)
-        {
-            // što ako već imamo određeni poizvod u košarici?
-            // projeriti dal ima taj proizvod u košarici već, ako da povećati amount, a s time i price
-            
-            _context.ProductInCarts.Add(productInCart);
-            await _context.SaveChangesAsync();
-
-            return Ok(productInCart); 
-        }
 
         // dohvat svih proizvoda jedne košarice
         [HttpGet("cart/{cartId}")]
@@ -41,6 +28,7 @@ namespace WebShop.Controllers
         }
 
         // proizvod u košarici - ažuiranje samo količine
+        //TODO: da se čita amount, ne da se palje
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAmount(int id, [FromBody] int amount)
         {
