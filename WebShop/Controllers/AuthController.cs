@@ -4,7 +4,7 @@ using WebShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using WebShop.Services;
 using System.Security.Claims;
-
+using WebShop.Entities;
 
 namespace WebShop.Controllers
 {

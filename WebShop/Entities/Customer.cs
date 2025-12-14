@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace WebShop.Models
+namespace WebShop.Entities
 {
     public class Customer 
     {

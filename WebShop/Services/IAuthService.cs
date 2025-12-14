@@ -1,6 +1,6 @@
 
 using WebShop.Models;
-
+using WebShop.Entities;
 namespace WebShop.Services
 {
     public interface IAuthService

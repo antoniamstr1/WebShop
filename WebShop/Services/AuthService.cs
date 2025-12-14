@@ -1,5 +1,6 @@
 using WebShop.Data;
 using WebShop.Models;
+using WebShop.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
