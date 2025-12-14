@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-function Category() {
+function Category({cart,setCart}) {
   const { category_id } = useParams();
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
