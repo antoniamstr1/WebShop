@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Link } from 'react-router-dom';
+
 
 function Category() {
   const { category_id } = useParams();
@@ -42,6 +44,7 @@ function Category() {
           flexWrap: "wrap",
           justifyContent: "center",
           gap: "30px",
+          position: "relative",
         }}
       >
         {products.map((product) => (
@@ -84,11 +87,27 @@ function Category() {
               <img
                 src="/images/add.png"
                 alt="cart"
-                style={{ width: "1.5rem", height: "1.5rem" }}
+                style={{ width: "1.5rem", height: "1.5rem", cursor: "pointer" }}
               />
             </div>
           </div>
         ))}
+      </div>
+      <div>
+        <Link to="/cart">
+          <img
+            src="/images/cart.png"
+            alt="cart"
+            style={{
+              width: "2rem",
+              height: "2rem",
+              position: "fixed",
+              top: "2rem",
+              right: "2rem",
+              cursor: "pointer",
+            }}
+          />
+        </Link>
       </div>
     </div>
   );
