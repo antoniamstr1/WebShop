@@ -32,12 +32,29 @@ function Cart() {
     0
   );
 
+  const handleDelete = async (productInCartId) => {
+    try {
+      const response = await fetch(`${API_URL}ProductInCart/${productInCartId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete item");
+      setCartItems((prev) => prev.filter((item) => item.id !== productInCartId));
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "50px" }}>
+    <div style={{ display: "flex", justifyContent: "center", padding: "50px"}}>
       <div style={{ width: "600px" }}>
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Cart</h2>
         {cartItems.map((item) => (
-          <div key={item.id} style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+          <div key={item.id} style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px",  alignItems: "center" }}>
+            <button style={{ marginRight:"1rem" }} onClick={() => handleDelete(item.id)}><img
+            src="/images/x.png"
+            alt="cart" style={{width:"1rem", height:"auto"}}></img></button>
             <span style={{ flex: 2 }}>{item.product.name}</span>
             <span style={{ flex: 1 }}>${item.product.price}</span>
             <input
