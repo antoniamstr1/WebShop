@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebShop.Models;
-
+using WebShop.Entities;
 namespace WebShop.Data
 {
     public class ApplicationDbContext : DbContext
@@ -18,5 +18,7 @@ namespace WebShop.Data
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<Address> Addresses => Set<Address>();
+        public DbSet<Order> Orders { get; set; }
+
     }
 }
