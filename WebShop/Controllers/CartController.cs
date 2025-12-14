@@ -20,33 +20,53 @@ namespace WebShop.Controllers
         }
 
 
+
         // dohvat trenutne košarice kupca
-        [HttpGet("customer/{customerId}")]
-        public async Task<ActionResult<Cart>> GetCartForCustomer(string customerId)
+        [HttpGet("customer/{cartId}")]
+        public async Task<ActionResult<Cart>> GetCartForCustomer(int cartId)
         {
             var cart = await _context.Carts
-                                     .FirstOrDefaultAsync(c => c.Customer.Id.ToString() == customerId);
+                                     .FirstOrDefaultAsync(c => c.Id == cartId);
+            var productsInCart = await _context.ProductInCarts
+                .Include(pic => pic.Product)
+                .Where(pic => pic.CartId == cartId)
+                .ToListAsync();
 
             if (cart == null)
-                return NotFound($"No cart found for CustomerId {customerId}");
+                return NotFound($"No cart found for cartId {cartId}");
 
-            return Ok(cart);
+            return Ok(new
+            {
+                Cart = cart,
+                ProductsInCart = productsInCart
+            });
         }
 
         //košarica mijenja status iz terminated nakon 20 minuta ako se nije u međuvremenu platilo -> status je stavljen na paid
 
         // dodavanje proizvoda u košaricu -> kreiranje nove košarice - paziti da samo jedna može biti u istom trenutku
-        [HttpPost("add/{customerId}/{productId}")]
-        public async Task<IActionResult> AddToCart(
-            string? customerId,
-            int productId)
+        public class AddProductRequest
         {
+            public int? CartId { get; set; }
+            public string? CustomerId { get; set; }
+            public int ProductId { get; set; }
+        }
+
+        [HttpPost("add")]
+        /* [HttpPost("add/{customerId}/{productId}")] */
+
+        public async Task<IActionResult> AddToCart([FromBody] AddProductRequest request)
+        {
+            string? customerId = request.CustomerId;
+            int? cartId = request.CartId;
+            int productId = request.ProductId;
 
             var existingCart = await _context.Carts
-                                             .FirstOrDefaultAsync(c => c.Customer.Id.ToString() == customerId && !c.Terminated);
+                                             .FirstOrDefaultAsync(c => c.Id == cartId && !c.Terminated);
 
             Cart cart;
-            // ako već nema košaricee- kreiram ju
+
+            // ako već nema košarice- kreiram ju
             if (existingCart == null)
             {
                 // defaultno - ako customer nije prijavljen
@@ -58,6 +78,7 @@ namespace WebShop.Controllers
                     currentUser = await _context.Customers
                                                 .FirstOrDefaultAsync(c => c.Id.ToString() == customerId);
                     if (currentUser == null)
+
                         return BadRequest("Cannot find user.");
                 }
 
@@ -71,7 +92,6 @@ namespace WebShop.Controllers
 
                 };
 
-
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();
             }
@@ -81,7 +101,15 @@ namespace WebShop.Controllers
             }
 
             // dodajem proizvod
-            var productInCart = await _productsInCartService.AddProductToCart(cart.Id, productId);
+            try
+            {
+                var productInCart = await _productsInCartService.AddProductToCart(cart.Id, productId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to add product to cart.");
+            }
+
             await _context.SaveChangesAsync();
 
             // povećavam price košarice
@@ -96,7 +124,7 @@ namespace WebShop.Controllers
             await _context.SaveChangesAsync();
 
 
-            return Ok(cart);
+            return Ok(cart.Id);
         }
 
 

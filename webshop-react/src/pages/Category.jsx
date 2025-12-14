@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Link } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 
 function Category() {
   const { category_id } = useParams();
   const [products, setProducts] = useState([]);
+  const [cart, setCart] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -35,6 +35,32 @@ function Category() {
       })
       .catch((err) => console.error("Failed to fetch products:", err));
   }, [category_id]);
+
+  const handleAddToCart = async (productId) => {
+    try {
+      const response = await fetch(`${API_URL}Cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ProductId: productId,
+          CartId: cart,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add product to cart");
+      }
+
+      if (cart === null) {
+        const cartID = await response.json();
+        setCart(cartID);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div>
@@ -84,17 +110,23 @@ function Category() {
                   ${product.price}
                 </span>
               </div>
-              <img
-                src="/images/add.png"
-                alt="cart"
-                style={{ width: "1.5rem", height: "1.5rem", cursor: "pointer" }}
-              />
+              <button onClick={() => handleAddToCart(product.id)}>
+                <img
+                  src="/images/add.png"
+                  alt="cart"
+                  style={{
+                    width: "1.5rem",
+                    height: "1.5rem",
+                    cursor: "pointer",
+                  }}
+                />
+              </button>
             </div>
           </div>
         ))}
       </div>
       <div>
-        <Link to="/cart">
+        <Link to={`/cart/${cart}`}>
           <img
             src="/images/cart.png"
             alt="cart"
