@@ -25,16 +25,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductsInCartService, ProductsInCartService>();
 
 
-var allowedOrigins = builder.Configuration
-    .GetSection("AllowedOrigins")
-    .Get<string[]>();
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        //TODO: prebaciti u .env
-        policy.WithOrigins(allowedOrigins)
+        policy.WithOrigins(builder.Configuration["AppSettings:locallink"], builder.Configuration["AppSettings:porductionlink"]) 
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

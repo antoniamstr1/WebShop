@@ -12,7 +12,6 @@ function Category({ cart, setCart }) {
     const fetchCart = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        console.log("token: ", token);
         const res = await fetch(`${API_URL}Cart/customer`, {
           method: "GET",
           headers: {
