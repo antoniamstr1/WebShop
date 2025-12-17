@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebShop.Data;
-using WebShop.Services;     
+using WebShop.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -27,11 +27,12 @@ builder.Services.AddScoped<IProductsInCartService, ProductsInCartService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins(builder.Configuration["AppSettings:locallink"], builder.Configuration["AppSettings:productionlink"]) 
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy
+            .WithOrigins(builder.Configuration["AppSettings:locallink"]!, builder.Configuration["AppSettings:productionlink"]!)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
@@ -59,11 +60,9 @@ builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
-
-app.UseCors();
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseAuthentication(); 
+app.UseHttpsRedirection();
+app.UseCors("Frontend");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/health", () => Results.Ok("Healthy"));
@@ -75,9 +74,10 @@ app.MapControllers();
 if (app.Environment.IsDevelopment())
 {
     app.Run("http://localhost:5001");
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 else
 {
-    app.UseHttpsRedirection();
     app.Run();
 }
