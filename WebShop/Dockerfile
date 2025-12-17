@@ -15,7 +15,7 @@ ENV TOKEN="MySuperSecureAndRandomKeyThatLooksJustAwesomeAndNeedsToBeVeryVeryLong
 ENV ISSUER="MyAwesomeApp"
 ENV AUDIENCE="MyAwesomeAudience"
 ENV LOCALLINK="http://localhost:5173",
-ENV PRODUCTIONLINK="https://webshopabysalto.onrender.com/"
+ENV PRODUCTIONLINK="https://webshopabysalto.onrender.com"
 
 COPY --from=build /WebShop/out .
 
