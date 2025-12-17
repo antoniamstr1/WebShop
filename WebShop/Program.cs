@@ -66,6 +66,9 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthentication(); 
 app.UseAuthorization();
+
+app.MapGet("/health", () => Results.Ok("Healthy"));
+
 app.MapControllers();
 
 
