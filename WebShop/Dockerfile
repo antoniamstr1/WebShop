@@ -14,8 +14,8 @@ WORKDIR /WebShop
 ENV TOKEN="MySuperSecureAndRandomKeyThatLooksJustAwesomeAndNeedsToBeVeryVeryLong!!!111oneeleven"
 ENV ISSUER="MyAwesomeApp"
 ENV AUDIENCE="MyAwesomeAudience"
-ENV locallink="http://localhost:5173",
-ENV porductionlink="https://webshopabysalto.onrender.com/"
+ENV LOCALLINK="http://localhost:5173",
+ENV PRODUCTIONLINK="https://webshopabysalto.onrender.com/"
 
 COPY --from=build /WebShop/out .
 

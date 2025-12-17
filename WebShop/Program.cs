@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(builder.Configuration["AppSettings:locallink"], builder.Configuration["AppSettings:porductionlink"]) 
+        policy.WithOrigins(builder.Configuration["AppSettings:locallink"], builder.Configuration["AppSettings:productionlink"]) 
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
