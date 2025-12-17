@@ -18,6 +18,8 @@ namespace WebShop.Services
         Task<Customer?> RegisterAsync(CustomerDto request);
         Task<TokenResponseDto?> LoginAsync(CustomerDto request);
         Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request);
+        TokenResponseDto AnonymousLogin();
+
     }
     public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
     {
@@ -36,6 +38,27 @@ namespace WebShop.Services
             return await CreateTokenResponse(user);
         }
 
+        public TokenResponseDto AnonymousLogin()
+        {
+            var guestId = Guid.NewGuid();
+
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, guestId.ToString()),
+                    new Claim(ClaimTypes.Role, "guest"),
+                    new Claim("isGuest", "true")
+                };
+
+            var accessToken = CreateToken(claims, DateTime.UtcNow.AddHours(6));
+
+            return new TokenResponseDto
+            {
+                AccessToken = accessToken,
+                RefreshToken = null
+            };
+        }
+
+
         private async Task<TokenResponseDto> CreateTokenResponse(Customer? user)
         {
 
@@ -46,12 +69,9 @@ namespace WebShop.Services
             };
         }
 
+        // registracija customera -> spremanje u bazu + hash password
         public async Task<Customer?> RegisterAsync(CustomerDto request)
         {
-            if (await context.Customers.AnyAsync(u => u.Email == request.Email))
-            {
-                return null;
-            }
 
             var user = new Customer();
             var hashedPassword = new PasswordHasher<Customer>()
@@ -105,28 +125,34 @@ namespace WebShop.Services
             return refreshToken;
         }
 
-        private string CreateToken(Customer user)
+        private string CreateToken(List<Claim> claims, DateTime expiresAt)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
+                Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]!));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
-            var tokenDescriptor = new JwtSecurityToken(
-                issuer: configuration.GetValue<string>("AppSettings:Issuer"),
-                audience: configuration.GetValue<string>("AppSettings:Audience"),
+            var token = new JwtSecurityToken(
+                issuer: configuration["AppSettings:Issuer"],
+                audience: configuration["AppSettings:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
+                expires: expiresAt,
                 signingCredentials: creds
             );
-            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        private string CreateToken(Customer user)
+        {
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Role, "customer")
+    };
+
+            return CreateToken(claims, DateTime.UtcNow.AddDays(1));
+        }
+
     }
 }

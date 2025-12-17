@@ -2,11 +2,38 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-function Category({cart,setCart}) {
+function Category({ cart, setCart }) {
   const { category_id } = useParams();
   const [products, setProducts] = useState([]);
 
   const API_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        console.log("token: ", token);
+        const res = await fetch(`${API_URL}Cart/customer`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
+        if (data.cart) {
+          setCart(data.cart.id);
+        }
+      } catch (err) {
+        console.error("Failed to fetch cartID:", err);
+      }
+    };
+
+    fetchCart();
+  }, []);
 
   useEffect(() => {
     if (!category_id) return;
@@ -37,25 +64,45 @@ function Category({cart,setCart}) {
 
   const handleAddToCart = async (productId) => {
     try {
+      //TODO : new function
+      let token = localStorage.getItem("accessToken");
+
+      if (!token) {
+        const response = await fetch(`${API_URL}auth/anonymouslogin`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+          const err = await response.text();
+          throw new Error(`Anonymous login failed: ${err}`);
+        }
+
+        const data = await response.json();
+        token = data.accessToken;
+
+        localStorage.setItem("accessToken", token);
+      }
+
       const response = await fetch(`${API_URL}Cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          ProductId: productId,
-          CartId: cart,
+          productId: productId,
+          cartId: cart,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add product to cart");
+        const err = await response.text();
+        throw new Error(`Add to cart failed: ${err}`);
       }
 
-      if (cart === null) {
-        const cartID = await response.json();
-        setCart(cartID);
-      }
+      const cartIdFromBackend = await response.json();
+      if (!cart) setCart(cartIdFromBackend);
     } catch (error) {
       console.error(error);
     }

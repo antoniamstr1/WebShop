@@ -1,23 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Cart() {
-  const { cartId } = useParams(); // assuming URL has /cart/:cartId
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    if (!cartId) return;
+    const fetchCart = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
 
-    fetch(`${API_URL}Cart/customer/${cartId}`)
-      .then((res) => {
+        if (!token) {
+          setCartItems([]); 
+          return;
+        }
+
+        const res = await fetch(`${API_URL}Cart/customer`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then((res) => setCartItems(res.productsInCart))
-      .catch((err) => console.error("Failed to fetch products:", err));
-  }, [cartId]);
+
+        const data = await res.json();
+        setCartItems(data.productsInCart);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+        setCartItems([]); 
+      }
+    };
+
+    fetchCart();
+  }, []);
 
   const handleAmountChange = (id, value) => {
     setCartItems((prev) =>
@@ -34,27 +51,46 @@ function Cart() {
 
   const handleDelete = async (productInCartId) => {
     try {
-      const response = await fetch(`${API_URL}ProductInCart/${productInCartId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${API_URL}ProductInCart/${productInCartId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to delete item");
-      setCartItems((prev) => prev.filter((item) => item.id !== productInCartId));
-
+      setCartItems((prev) =>
+        prev.filter((item) => item.id !== productInCartId)
+      );
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "50px"}}>
+    <div style={{ display: "flex", justifyContent: "center", padding: "50px" }}>
       <div style={{ width: "600px" }}>
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Cart</h2>
         {cartItems.map((item) => (
-          <div key={item.id} style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px",  alignItems: "center" }}>
-            <button style={{ marginRight:"1rem" }} onClick={() => handleDelete(item.id)}><img
-            src="/images/x.png"
-            alt="cart" style={{width:"1rem", height:"auto"}}></img></button>
+          <div
+            key={item.id}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "10px",
+              alignItems: "center",
+            }}
+          >
+            <button
+              style={{ marginRight: "1rem" }}
+              onClick={() => handleDelete(item.id)}
+            >
+              <img
+                src="/images/x.png"
+                alt="cart"
+                style={{ width: "1rem", height: "auto" }}
+              ></img>
+            </button>
             <span style={{ flex: 2 }}>{item.product.name}</span>
             <span style={{ flex: 1 }}>${item.product.price}</span>
             <input
@@ -64,14 +100,30 @@ function Cart() {
               onChange={(e) => handleAmountChange(item.id, e.target.value)}
               style={{ flex: 1, textAlign: "center", width: "2rem" }}
             />
-            <span style={{ flex: 1, textAlign: "right" }}>${item.product.price * item.amount}</span>
+            <span style={{ flex: 1, textAlign: "right" }}>
+              ${item.product.price * item.amount}
+            </span>
           </div>
         ))}
-        <div style={{ display: "flex", justifyContent: "flex-end", fontWeight: "bold", marginTop: "20px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            fontWeight: "bold",
+            marginTop: "20px",
+          }}
+        >
           Total: ${totalPrice}
         </div>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem"}}><button style={{ }}>Continue</button></div>
-        
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "2rem",
+          }}
+        >
+          <button style={{}}>Continue</button>
+        </div>
       </div>
     </div>
   );

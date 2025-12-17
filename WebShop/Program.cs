@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using WebShop.Data;
 using WebShop.Services;     
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 
@@ -33,12 +36,35 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+        ValidAudience = builder.Configuration["AppSettings:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!))
+    };
+});
+
+builder.Services.AddAuthorization();
+
+
 var app = builder.Build();
 
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseAuthentication();
+app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapControllers();
 

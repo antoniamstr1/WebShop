@@ -33,6 +33,14 @@ namespace WebShop.Controllers
             return Ok(result);
         }
 
+        [HttpPost("anonymouslogin")]
+        public async Task<ActionResult> AnonymousLogin()
+        {
+            var result = _authService.AnonymousLogin();
+            return Ok(result);
+        }
+
+
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
         {

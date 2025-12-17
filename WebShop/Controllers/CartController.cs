@@ -1,8 +1,12 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebShop.Data;
 using WebShop.Models;
 using WebShop.Services;
+
+
 namespace WebShop.Controllers
 {
     [ApiController]
@@ -11,6 +15,8 @@ namespace WebShop.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IProductsInCartService _productsInCartService;
+
+
 
         public CartController(ApplicationDbContext context, IProductsInCartService productsInCartService)
         {
@@ -21,18 +27,32 @@ namespace WebShop.Controllers
 
 
         // dohvat trenutne košarice kupca
-        [HttpGet("customer/{cartId}")]
-        public async Task<ActionResult<Cart>> GetCartForCustomer(int cartId)
+        [HttpGet("customer")]
+        [Authorize]
+        public async Task<ActionResult<Cart>> GetCartForCustomer()
         {
+            var nameIdClaim = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+            string? customerId = nameIdClaim?.Value;
+
+            if (string.IsNullOrEmpty(customerId))
+                return Unauthorized("User not found in token.");
+
             var cart = await _context.Carts
-                                     .FirstOrDefaultAsync(c => c.Id == cartId);
+                 .Include(c => c.Customer)
+                 .FirstOrDefaultAsync(c =>
+                     (c.Customer != null && c.Customer.Id.ToString() == customerId && !c.Terminated)
+                     || (c.AnonymousCustomer != null && c.AnonymousCustomer == customerId && !c.Terminated)
+                 );
+            if (cart == null)
+                return Ok(new
+                {
+                    Cart = (Cart?)null,
+                    ProductsInCart = new List<ProductInCart>()
+                });
             var productsInCart = await _context.ProductInCarts
                 .Include(pic => pic.Product)
-                .Where(pic => pic.CartId == cartId)
+                .Where(pic => pic.CartId == cart.Id)
                 .ToListAsync();
-
-            if (cart == null)
-                return NotFound($"No cart found for cartId {cartId}");
 
             return Ok(new
             {
@@ -52,11 +72,15 @@ namespace WebShop.Controllers
         }
 
         [HttpPost("add")]
-        /* [HttpPost("add/{customerId}/{productId}")] */
-
+        [Authorize]
         public async Task<IActionResult> AddToCart([FromBody] AddProductRequest request)
         {
-            string? customerId = request.CustomerId;
+            var nameIdClaim = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+            string? customerId = nameIdClaim?.Value;
+
+            if (string.IsNullOrEmpty(customerId))
+                return Unauthorized("User not found in token.");
+
             int? cartId = request.CartId;
             int productId = request.ProductId;
 
@@ -68,23 +92,24 @@ namespace WebShop.Controllers
             // ako već nema košarice- kreiram ju
             if (existingCart == null)
             {
-                // defaultno - ako customer nije prijavljen
                 Customer? currentUser = null;
+                string? anonymousCurrentUser = null;
 
-                // ako imamo customerId - customer je prijavljen
-                if (customerId != null)
+                // ako imamo customerId 
+                if (!string.IsNullOrEmpty(customerId))
                 {
+                    // customer je prijavljen
                     currentUser = await _context.Customers
-                                                .FirstOrDefaultAsync(c => c.Id.ToString() == customerId);
+                                    .FirstOrDefaultAsync(c => c.Id.ToString() == customerId);
                     if (currentUser == null)
-
-                        return BadRequest("Cannot find user.");
+                        anonymousCurrentUser = customerId;
                 }
 
                 // kreiranje košarice
                 cart = new Cart
                 {
                     Customer = currentUser,
+                    AnonymousCustomer = anonymousCurrentUser,
                     StartTime = DateTime.UtcNow,
                     PaymentConfirmed = false,
                     Terminated = false,
