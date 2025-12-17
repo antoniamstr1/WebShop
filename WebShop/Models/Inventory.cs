@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebShop.Entities
+namespace WebShop.Models
 {
     public class Inventory
     {

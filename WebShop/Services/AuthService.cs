@@ -1,6 +1,5 @@
 using WebShop.Data;
 using WebShop.Models;
-using WebShop.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -13,6 +12,13 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace WebShop.Services
 {
+
+    public interface IAuthService
+    {
+        Task<Customer?> RegisterAsync(CustomerDto request);
+        Task<TokenResponseDto?> LoginAsync(CustomerDto request);
+        Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request);
+    }
     public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
     {
         public async Task<TokenResponseDto?> LoginAsync(CustomerDto request)
@@ -32,7 +38,7 @@ namespace WebShop.Services
 
         private async Task<TokenResponseDto> CreateTokenResponse(Customer? user)
         {
-            
+
             return new TokenResponseDto
             {
                 AccessToken = CreateToken(user),

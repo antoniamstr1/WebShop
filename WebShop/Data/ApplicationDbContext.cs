@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using WebShop.Models;
-using WebShop.Entities;
 namespace WebShop.Data
 {
     public class ApplicationDbContext : DbContext

@@ -22,7 +22,7 @@ namespace WebShop.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("WebShop.Entities.Address", b =>
+            modelBuilder.Entity("WebShop.Models.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,7 +58,7 @@ namespace WebShop.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Cart", b =>
+            modelBuilder.Entity("WebShop.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,7 +88,7 @@ namespace WebShop.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Category", b =>
+            modelBuilder.Entity("WebShop.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,7 +105,7 @@ namespace WebShop.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Customer", b =>
+            modelBuilder.Entity("WebShop.Models.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -143,7 +143,7 @@ namespace WebShop.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Image", b =>
+            modelBuilder.Entity("WebShop.Models.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -165,7 +165,7 @@ namespace WebShop.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Inventory", b =>
+            modelBuilder.Entity("WebShop.Models.Inventory", b =>
                 {
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
@@ -178,7 +178,7 @@ namespace WebShop.Migrations
                     b.ToTable("Inventories");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Order", b =>
+            modelBuilder.Entity("WebShop.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -219,7 +219,7 @@ namespace WebShop.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Product", b =>
+            modelBuilder.Entity("WebShop.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -252,7 +252,7 @@ namespace WebShop.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.ProductInCart", b =>
+            modelBuilder.Entity("WebShop.Models.ProductInCart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -276,51 +276,51 @@ namespace WebShop.Migrations
                     b.ToTable("ProductInCarts");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Cart", b =>
+            modelBuilder.Entity("WebShop.Models.Cart", b =>
                 {
-                    b.HasOne("WebShop.Entities.Customer", "Customer")
+                    b.HasOne("WebShop.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Customer", b =>
+            modelBuilder.Entity("WebShop.Models.Customer", b =>
                 {
-                    b.HasOne("WebShop.Entities.Address", "Address")
+                    b.HasOne("WebShop.Models.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId");
 
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Image", b =>
+            modelBuilder.Entity("WebShop.Models.Image", b =>
                 {
-                    b.HasOne("WebShop.Entities.Product", null)
+                    b.HasOne("WebShop.Models.Product", null)
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Inventory", b =>
+            modelBuilder.Entity("WebShop.Models.Inventory", b =>
                 {
-                    b.HasOne("WebShop.Entities.Product", null)
+                    b.HasOne("WebShop.Models.Product", null)
                         .WithOne("Inventory")
-                        .HasForeignKey("WebShop.Entities.Inventory", "ProductId")
+                        .HasForeignKey("WebShop.Models.Inventory", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Order", b =>
+            modelBuilder.Entity("WebShop.Models.Order", b =>
                 {
-                    b.HasOne("WebShop.Entities.Address", "Address")
+                    b.HasOne("WebShop.Models.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebShop.Entities.Cart", "Cart")
+                    b.HasOne("WebShop.Models.Cart", "Cart")
                         .WithMany()
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -331,9 +331,9 @@ namespace WebShop.Migrations
                     b.Navigation("Cart");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Product", b =>
+            modelBuilder.Entity("WebShop.Models.Product", b =>
                 {
-                    b.HasOne("WebShop.Entities.Category", "Category")
+                    b.HasOne("WebShop.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -342,9 +342,9 @@ namespace WebShop.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.ProductInCart", b =>
+            modelBuilder.Entity("WebShop.Models.ProductInCart", b =>
                 {
-                    b.HasOne("WebShop.Entities.Product", "Product")
+                    b.HasOne("WebShop.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -353,7 +353,7 @@ namespace WebShop.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("WebShop.Entities.Product", b =>
+            modelBuilder.Entity("WebShop.Models.Product", b =>
                 {
                     b.Navigation("Images");
 

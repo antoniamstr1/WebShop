@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebShop.Data;
 using WebShop.Models;
-using WebShop.Entities;
 namespace WebShop.Controllers
 {
     [ApiController]

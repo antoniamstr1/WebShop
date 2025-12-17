@@ -1,7 +1,6 @@
 using WebShop.Data;
 using WebShop.Models;
 using Microsoft.EntityFrameworkCore;
-using WebShop.Entities;
 namespace WebShop.Services
 {
     public interface IProductsInCartService
