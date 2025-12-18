@@ -52,6 +52,12 @@ namespace WebShop.Controllers
             return NoContent();
         }
 
+        [HttpGet("health")]
+        public IActionResult Health()
+        {
+            return Ok(new { status = "Healthy", timestamp = DateTime.UtcNow });
+        }
+
 
     }
 }

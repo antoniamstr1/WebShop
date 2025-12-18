@@ -68,6 +68,12 @@ namespace WebShop.Controllers
 
             return Ok(new { UserId = userId, Role = User.FindFirstValue(ClaimTypes.Role) });
         }
+
+        [HttpGet("health")]
+        public IActionResult Health()
+        {
+            return Ok(new { status = "Healthy", timestamp = DateTime.UtcNow });
+        }
     }
 
 }

@@ -80,14 +80,14 @@ app.UseAuthorization();
 app.MapMethods("/health", new[] { "GET", "HEAD" }, () => Results.Ok("Healthy"));
 
 app.MapControllers();
-
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
 if (app.Environment.IsDevelopment())
 {
     app.Run("http://localhost:5001");
-    app.UseSwagger();
-    app.UseSwaggerUI();
+
 }
 else
 {
