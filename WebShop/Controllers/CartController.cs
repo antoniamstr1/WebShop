@@ -151,7 +151,7 @@ namespace WebShop.Controllers
             return Ok(cart.Id);
         }
 
-        [HttpGet("health")]
+        [HttpHead("health")]
         public IActionResult Health()
         {
             return Ok(new { status = "Healthy", timestamp = DateTime.UtcNow });
