@@ -1,4 +1,4 @@
-# maloprodajnu platofrmu Demo (.NET + React)
+# maloprodajna platofrma Demo (.NET + React)
 
 Ovaj projekt predstavlja **maloprodajnu platofrmu**  implementiranu pomoću **.NET-a (backend)** i **React-a (frontend)**. Fokus je na dvije ključne funkcionalnosti servisa: 
 
