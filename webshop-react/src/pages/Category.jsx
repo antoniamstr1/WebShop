@@ -11,13 +11,13 @@ function Category({ cart, setCart }) {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
+        await ensureAnonymousLogin();
         const res = await fetch(`${API_URL}Cart/customer`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         });
 
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -61,34 +61,51 @@ function Category({ cart, setCart }) {
       .catch((err) => console.error("Failed to fetch products:", err));
   }, [category_id]);
 
-  const handleAddToCart = async (productId) => {
+  async function ensureAnonymousLogin() {
     try {
-      //TODO : new function
-      let token = localStorage.getItem("accessToken");
+      const meResponse = await fetch(`${API_URL}auth/me`, {
+        method: "GET",
+        credentials: "include", 
+      });
 
-      if (!token) {
-        const response = await fetch(`${API_URL}auth/anonymouslogin`, {
+      if (meResponse.ok) {
+        const user = await meResponse.json();
+        return user;
+      }
+
+      if (meResponse.status === 401) {
+        const anonResponse = await fetch(`${API_URL}auth/anonymouslogin`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
         });
 
-        if (!response.ok) {
-          const err = await response.text();
+        if (!anonResponse.ok) {
+          const err = await anonResponse.text();
           throw new Error(`Anonymous login failed: ${err}`);
         }
 
-        const data = await response.json();
-        token = data.accessToken;
-
-        localStorage.setItem("accessToken", token);
+        const guestUser = await anonResponse.json();
+        return guestUser;
       }
+
+      throw new Error("Unexpected response");
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
+  const handleAddToCart = async (productId) => {
+    try {
+      await ensureAnonymousLogin();
 
       const response = await fetch(`${API_URL}Cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({
           productId: productId,
           cartId: cart,

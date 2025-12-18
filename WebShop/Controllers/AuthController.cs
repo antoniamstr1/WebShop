@@ -37,7 +37,15 @@ namespace WebShop.Controllers
         public async Task<ActionResult> AnonymousLogin()
         {
             var result = _authService.AnonymousLogin();
-            return Ok(result);
+            Response.Cookies.Append("jwt_token", result.AccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddHours(1)
+            });
+            //return Ok(result);
+            return Ok(new { message = "ok" });
         }
 
 
@@ -51,21 +59,14 @@ namespace WebShop.Controllers
             return Ok(result);
         }
 
-        [Authorize]
         [HttpGet("me")]
-        public IActionResult GetCurrentUser()
+        public IActionResult Me()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (userIdClaim == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
                 return Unauthorized();
 
-            return Ok(new
-            {
-                UserId = userIdClaim,
-                Email = emailClaim
-            });
+            return Ok(new { UserId = userId, Role = User.FindFirstValue(ClaimTypes.Role) });
         }
     }
 

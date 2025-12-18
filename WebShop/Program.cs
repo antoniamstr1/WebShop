@@ -31,6 +31,7 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(builder.Configuration["AppSettings:locallink"]!, builder.Configuration["AppSettings:productionlink"]!)
+            .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -53,6 +54,17 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["AppSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!))
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (context.Request.Cookies.ContainsKey("jwt_token"))
+            {
+                context.Token = context.Request.Cookies["jwt_token"];
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
