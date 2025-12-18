@@ -8,19 +8,15 @@ function Cart() {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
 
-        if (!token) {
-          setCartItems([]); 
-          return;
-        }
 
         const res = await fetch(`${API_URL}Cart/customer`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            /* Authorization: `Bearer ${token}`, */
           },
+          credentials: 'include'
         });
 
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
