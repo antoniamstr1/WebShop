@@ -65,7 +65,7 @@ app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/health", () => Results.Ok("Healthy"));
+app.MapMethods("/health", new[] { "GET", "HEAD" }, () => Results.Ok("Healthy"));
 
 app.MapControllers();
 
